@@ -9,9 +9,6 @@ const START_SERVER = () => {
 
   const app = express()
 
-  const hostname = `${ env.APP_HOST }`
-  const port = `${ env.APP_PORT }`
-
   app.get('/', async (req, res) => {
     res.end('<h1>Hello World!</h1><hr>')
   })
