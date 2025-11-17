@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-// import { env } from '~/config/environment'
+import { env } from '~/config/environment'
 
 // Middleware xử lý lỗi tập trung trong ứng dụng Back-end NodeJS (ExpressJS)
 export const errorHandlingMiddleware = (err, req, res, next) => {
@@ -17,7 +17,7 @@ export const errorHandlingMiddleware = (err, req, res, next) => {
   // console.error(responseError)
 
   // Only when the environment is DEV should the Stack Trace be returned to make debugging easier; otherwise, it should be removed.
-  // if (env.BUILD_MODE !== 'dev') delete responseError.stack
+  if (env.BUILD_MODE !== 'dev') delete responseError.stack
 
   // console.error(responseError)
 
