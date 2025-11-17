@@ -1,11 +1,13 @@
 import { StatusCodes } from 'http-status-codes'
-import ApiError from '~/utils/ApiError'
+import { boardService } from '~/services/boardService'
 
 const createNew = async (req, res, next ) => {
   try {
-    console.log('req.body: ', req.body)
 
-    res.status(StatusCodes.CREATED).json({ message: 'POST from Controller: API create a new board' })
+    // Routing data to Service layer to handle business logic
+    const createdBoard = await boardService.createNew(req.body)
+
+    res.status(StatusCodes.CREATED).json(createdBoard)
     // throw new ApiError(StatusCodes.BAD_GATEWAY, 'This is a simulated error from boardController.createNew')
 
   } catch (error) {
