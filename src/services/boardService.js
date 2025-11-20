@@ -1,6 +1,9 @@
 /* eslint-disable no-useless-catch */
 import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
+import { columnModel } from '~/models/columnModel'
+import { cardModel } from '~/models/cardModel'
+
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
@@ -51,7 +54,52 @@ const getDetails = async (boardId) => {
   }
 }
 
+// Update Board
+const update = async ( boardId, reqBody ) => {
+  try {
+    const updateData = {
+      ...reqBody,
+      updateAt: Date.now()
+    }
+
+    const updateBoard = await boardModel.update(boardId, updateData)
+
+    return updateBoard
+  } catch (error) {
+    throw error
+  }
+}
+
+
+const moveCardToDifferentColumn = async ( reqBody ) => {
+  try {
+    //  * Step 1: Update the cardOrderIds array of the original Column (basically removing the card’s _id from the array)
+    await columnModel.update(reqBody.prevColumnId, {
+      cardOrderIds: reqBody.prevCardOrderIds,
+      updateAt: Date.now()
+    })
+
+    //  * Step 2: Update the cardOrderIds array of the target Column (basically adding the card’s _id to the array)
+    await columnModel.update(reqBody.nextColumnId, {
+      cardOrderIds: reqBody.nextCardOrderIds,
+      updateAt: Date.now()
+    })
+
+    //  * Step 3: Update the new columnId field of the dragged card
+    await cardModel.update(reqBody.currentCardId, {
+      columnId: reqBody.nextColumnId
+    })
+
+
+    return { updateResult: 'Success' }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const boardService = {
   createNew,
-  getDetails
+  getDetails,
+  update,
+  moveCardToDifferentColumn
 }
