@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 import { boardModel } from '~/models/boardModel'
+import { cardModel } from '~/models/cardModel'
 import { columnModel } from '~/models/columnModel'
 // import ApiError from '~/utils/ApiError'
 // import { StatusCodes } from 'http-status-codes'
@@ -47,8 +48,24 @@ const update = async ( columnId, reqBody ) => {
   }
 }
 
+// Delete Column
+const deleteItem = async ( columnId ) => {
+  try {
+    // Delete Column
+    await columnModel.deleteOneById(columnId)
+
+    // Delete all Cards
+    await cardModel.deleteManyByColumnId(columnId)
+
+    return { deleteResult: 'Column and its Cards deleted successfully!' }
+  } catch (error) {
+    throw error
+  }
+}
+
 
 export const columnService = {
   createNew,
-  update
+  update,
+  deleteItem
 }
