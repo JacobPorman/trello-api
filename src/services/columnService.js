@@ -1,9 +1,10 @@
 /* eslint-disable no-useless-catch */
+import { StatusCodes } from 'http-status-codes'
 import { boardModel } from '~/models/boardModel'
 import { cardModel } from '~/models/cardModel'
 import { columnModel } from '~/models/columnModel'
+import ApiError from '~/utils/ApiError'
 // import ApiError from '~/utils/ApiError'
-// import { StatusCodes } from 'http-status-codes'
 // import { cloneDeep } from 'lodash'
 
 const createNew = async (reqBody) => {
@@ -51,11 +52,20 @@ const update = async ( columnId, reqBody ) => {
 // Delete Column
 const deleteItem = async ( columnId ) => {
   try {
+    const targetColumn = await columnModel.findOneById(columnId)
+
+    if (!targetColumn) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Column not found!')
+    }
+
     // Delete Column
     await columnModel.deleteOneById(columnId)
 
     // Delete all Cards
     await cardModel.deleteManyByColumnId(columnId)
+
+    // Delete columnId in columnOrderIds array of the board contained it
+    await boardModel.pullColumnOrderIds(targetColumn)
 
     return { deleteResult: 'Column and its Cards deleted successfully!' }
   } catch (error) {

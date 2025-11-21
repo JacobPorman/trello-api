@@ -95,6 +95,22 @@ const pushColumnOrderIds = async (column) => {
   }
 }
 
+
+// Using $pull in MongoDB to get an item out the array and then delete it
+const pullColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(column.boardId) },
+      { $pull: { columnOrderIds: new ObjectId(column._id) } },
+      { returnDocument: 'after' }
+    )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+
 // Update Board data in DB
 const update = async (boardId, updateData) => {
   try {
@@ -129,6 +145,7 @@ export const boardModel = {
   findOneById,
   getDetails,
   pushColumnOrderIds,
-  update
+  update,
+  pullColumnOrderIds
 }
 
