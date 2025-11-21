@@ -25,9 +25,17 @@ const START_SERVER = () => {
   // Global error handling middleware
   app.use(errorHandlingMiddleware)
 
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
-    console.log(`Hello ${ env.AUTHOR }, I am running at http://${ env.APP_HOST }:${ env.APP_PORT }/`)
-  })
+
+  if (env.BUILD_MODE === 'production') {
+    // env Production
+    app.listen(process.env.PORT, () => {
+      console.log(`3. Production: Hello ${ env.AUTHOR }, I am running at ${ process.env.APP_PORT }/`)})
+  } else {
+    // env Dev
+    app.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
+      console.log(`Hello ${ env.AUTHOR }, I am running at http://${ env.LOCAL_DEV_APP_HOST }:${ env.LOCAL_DEV_APP_PORT }/`)})
+  }
+
 
   exitHook(() => {
     // console.log('Disconnecting DB')
