@@ -1,6 +1,7 @@
 
 export const WHITELIST_DOMAINS = [
-  'http://localhost:5173'
+  // Do not have this domain
+  // 'http://localhost:5173'
   // ...
 ]
 

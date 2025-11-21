@@ -9,11 +9,11 @@ export const corsOptions = {
   origin: function (origin, callback) {
 
     // Allow calling API via POSTMAN in the development environment,
-    // Normally when using Postman, the origin value will be undefined.
-    if (!origin && env.BUILD_MODE === 'dev') {
+    if (env.BUILD_MODE === 'dev') {
       return callback(null, true)
     }
 
+    // env.BUILD_MODE === 'production'
     // Check whether the origin is included in the allowed domain whitelist
     if (WHITELIST_DOMAINS.includes(origin)) {
       return callback(null, true)
